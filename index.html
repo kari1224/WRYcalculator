@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>自選目標業績計算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label, input, select, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    input, select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .result {
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>自選目標業績計算器</h2>
+    <label for="amount">輸入當前流水：</label>
+    <input type="number" id="amount" placeholder="例如：158604">
+
+    <label for="target">選擇目標業績：</label>
+    <select id="target">
+      <option value="5000">5,000</option>
+      <option value="10000">10,000</option>
+      <option value="15000">15,000</option>
+      <option value="25000">25,000</option>
+      <option value="45000">45,000</option>
+      <option value="65000">65,000</option>
+      <option value="85000">85,000</option>
+      <option value="100000">100,000</option>
+      <option value="150000">150,000</option>
+      <option value="200000">200,000</option>
+    </select>
+
+    <button onclick="calculateCustomTarget()">計算缺口</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const bonusTable = {
+      5000: 500,
+      10000: 1500,
+      15000: 2300,
+      25000: 4000,
+      45000: 7000,
+      65000: 11000,
+      85000: 15000,
+      100000: 20000,
+      150000: 35000,
+      200000: 50000
+    };
+
+    function calculateCustomTarget() {
+      const amount = parseInt(document.getElementById('amount').value);
+      const target = parseInt(document.getElementById('target').value);
+      if (isNaN(amount) || amount <= 0) {
+        document.getElementById('result').innerText = "請輸入正確的流水金額";
+        return;
+      }
+      if (amount >= target) {
+        document.getElementById('result').innerText = `當前流水 ${amount.toLocaleString()} 已達到目標業績 ${target.toLocaleString()}！`;
+        return;
+      }
+
+      const gap = target - amount;
+      const cost = gap * 0.7;
+      const giftIncome = gap * 0.4;
+      const bonus = bonusTable[target] || 0;
+      const totalIncome = giftIncome + bonus;
+      const net = totalIncome - cost;
+
+      const resultText = 
+`當前流水 = ${amount.toLocaleString()}
+目標業績 = ${target.toLocaleString()}
+缺額 = ${target.toLocaleString()} - ${amount.toLocaleString()} = ${gap.toLocaleString()} 流水
+補流水成本 = ${gap.toLocaleString()} × 0.7 = ${cost.toLocaleString()}
+補流水收益 = ${gap.toLocaleString()} × 0.4 = ${giftIncome.toLocaleString()}
+總收益 = ${giftIncome.toLocaleString()} (禮物收益) + ${bonus.toLocaleString()} (繁星獎金) = ${totalIncome.toLocaleString()}
+淨收益 = ${totalIncome.toLocaleString()} - ${cost.toLocaleString()} = ${net.toLocaleString()} (${net >= 0 ? '賺' : '虧'})
+
+結論：當前流水 ${amount.toLocaleString()} 的情況下收流水會${net >= 0 ? '賺' : '虧'} ${Math.abs(net).toLocaleString()}`;
+
+      document.getElementById('result').innerText = resultText;
+    }
+  </script>
+</body>
+</html>
